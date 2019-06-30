@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd        http://dubbo.apache.org/schema/dubbo        http://dubbo.apache.org/schema/dubbo/dubbo.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.atguigu.gmall.service.impl"/>
+
+    <!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+    <dubbo:application name="user-service-consumer"/>
+
+    <!-- 指定注册中心位置 -->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
+    <!-- 消费者 接口级配置 -->
+    <dubbo:reference id="userService" interface="com.atguigu.gmall.service.UserService"
+                     check="false" timeout="1000" version="*"
+                     stub="com.atguigu.gmall.stub.UserServiceStub">
+        <!--消费者 方法级配置-->
+        <dubbo:method name="getUserAddressList"  timeout="4000" retries="3"/>
+    </dubbo:reference>
+
+    <!--消费者 全局配置-->
+    <dubbo:consumer timeout="1000"/>
+
+    <!--监控中心配置-->
+    <dubbo:monitor protocol="registry"/>
+
+</beans>
